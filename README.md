@@ -45,7 +45,7 @@ PostgreSQL >= 13.x
 Git
 
 Installation
-git clone https://github.com/<your-username>/pos-server.git
+git clone https://github.com/MHS676/pos-server.git
 cd pos-server
 npm install
 
