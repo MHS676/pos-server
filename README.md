@@ -1,6 +1,18 @@
 POS Server
 
-A NestJS + GraphQL + Prisma POS backend with multi-tenant support (organizations, users, categories, products, orders) and JWT authentication.
+A NestJS + GraphQL + Prisma POS backend with multi-tenant support:
+
+Organizations
+
+Users
+
+Categories
+
+Products
+
+Orders
+
+Includes JWT authentication for secure access.
 
 Table of Contents
 
@@ -20,6 +32,8 @@ GraphQL Playground
 
 Testing APIs
 
+Notes
+
 Requirements
 
 Node.js >= 18.x
@@ -31,26 +45,22 @@ PostgreSQL >= 13.x
 Git
 
 Installation
-
-Clone the repository:
-
 git clone https://github.com/<your-username>/pos-server.git
 cd pos-server
-
-
-Install dependencies:
-
 npm install
 
 Environment Variables
 
-Create a .env file in the project root:
+Create a .env file in the root of the project:
 
+# PostgreSQL connection URL
 DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>?schema=public
+
+# JWT secret for authentication
 JWT_SECRET=supersecret
 
 
-Replace <user>, <password>, <host>, <port>, <database> with your Postgres credentials.
+Replace <user>, <password>, <host>, <port>, and <database> with your database credentials.
 
 Database Setup
 1. Generate Prisma client
@@ -60,64 +70,59 @@ npx prisma generate
 npx prisma db push
 
 
-or, if using migrations:
+Or if you are using migrations:
 
 npx prisma migrate dev --name init
 
+3. Inspect database (optional)
+npx prisma studio
+
+
+Opens a web UI to browse and manage your database tables.
+
 Seed Script
 
-We include a prisma/seed.ts file to automatically populate your database with minimal data for development/testing:
+The project includes prisma/seed.ts to auto-populate your database:
 
-Creates a default organization.
+Creates a default organization
 
-Creates 2 categories.
+Creates 2 categories
 
-Creates 2 products tied to those categories.
+Creates 2 products tied to those categories
 
-How to run the seed
+Run the seed
 npm run db:seed
 
 
-Or directly with Prisma:
+After running the seed, you can immediately test APIs without manually creating records.
 
-npx prisma db seed
-
-
-After running the seed, the database will have:
+Example records after seeding:
 
 Table	Example Record
 Organization	Acme Inc. (id=1)
 Category	Electronics, Home Office
 Product	Wireless Headphones, Ergonomic Desk Chair
-
-You can now register users, create orders, and test all APIs without manually adding database records.
-
 Running the Server
 
-Development mode with auto-reload:
+Development mode (auto-reload):
 
 npm run start:dev
 
 
-Production build:
+Production mode:
 
 npm run build
 npm run start:prod
 
 
-The server will start on http://localhost:3000/graphql
-.
+Server runs at: http://localhost:3000/graphql
 
 GraphQL Playground
 
-Access GraphQL Playground at:
+Open http://localhost:3000/graphql
+ to execute queries and mutations.
 
-http://localhost:3000/graphql
-
-
-Execute queries and mutations.
-
-Include JWT token in HTTP headers for guarded routes:
+JWT-protected routes require headers:
 
 {
   "Authorization": "Bearer <your-jwt-token>"
@@ -126,8 +131,8 @@ Include JWT token in HTTP headers for guarded routes:
 Testing APIs
 Auth
 Register
-mutation Register($email:String!,$password:String!,$name:String!,$organizationId:Int!){
-  register(email:$email,password:$password,name:$name,organizationId:$organizationId){
+mutation Register($email:String!, $password:String!, $name:String!, $organizationId:Int!) {
+  register(email:$email, password:$password, name:$name, organizationId:$organizationId) {
     id
     email
     name
@@ -145,8 +150,8 @@ Variables:
 }
 
 Login
-mutation Login($email:String!,$password:String!){
-  login(email:$email,password:$password)
+mutation Login($email:String!, $password:String!) {
+  login(email:$email, password:$password)
 }
 
 
@@ -158,7 +163,7 @@ Variables:
 }
 
 
-Copy the returned JWT token for guarded queries.
+Copy the returned JWT token for all guarded queries.
 
 Users
 query Users {
@@ -170,7 +175,7 @@ query Users {
 }
 
 Categories
-List categories
+List Categories
 query Categories {
   categories {
     id
@@ -185,7 +190,7 @@ query Categories {
   }
 }
 
-Create category
+Create Category
 mutation CreateCategory($data: CreateCategoryInput!) {
   createCategory(data: $data) {
     id
@@ -205,9 +210,9 @@ Variables:
 }
 
 Orders
-Place order
-mutation PlaceOrder($productId:Int!,$quantity:Int!){
-  placeOrder(productId:$productId,quantity:$quantity){
+Place Order
+mutation PlaceOrder($productId:Int!, $quantity:Int!) {
+  placeOrder(productId:$productId, quantity:$quantity) {
     id
     userId
     productId
@@ -225,7 +230,7 @@ Variables:
   "quantity": 2
 }
 
-List orders
+List Orders
 query Orders {
   orders {
     id
@@ -240,21 +245,21 @@ query Orders {
 }
 
 Sync
-Sync users from JSONPlaceholder
+Sync Users from JSONPlaceholder
 mutation SyncUsers {
   syncUsers
 }
 
-Sync categories from JSONPlaceholder
+Sync Categories from JSONPlaceholder
 mutation SyncCategories {
   syncCategories
 }
 
 Notes
 
-Ensure Organization exists before registering users (id must match).
+Ensure Organization exists before registering users.
 
-Seed script (seed.ts) is optional but recommended for dev/testing.
+Seed script (seed.ts) is optional but recommended for development/testing.
 
 JWT token is required for all guarded queries/mutations.
 
