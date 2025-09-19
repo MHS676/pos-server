@@ -8,7 +8,7 @@ datasource db {
 }
 
 /**
- * Models follow the assignment:
+ * Models:
  * - Product: id, name, price, stock, categoryId, organizationId
  * - Category: id, name, description, organizationId
  * - Order: id, userId, productId, quantity, totalPrice, createdAt

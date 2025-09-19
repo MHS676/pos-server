@@ -6,7 +6,6 @@ export class UserService {
     constructor(private prisma: PrismaService) { }
 
     async getUsers(organizationId: number) {
-        // include removed to match GraphQL fields
         return this.prisma.user.findMany({
             where: { organizationId },
             select: { id: true, email: true, name: true },

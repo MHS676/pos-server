@@ -12,7 +12,7 @@ import { UserModule } from '../user/user.module';
         forwardRef(() => UserModule),
         PassportModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET || 'supersecret', // Make sure the secret is the same across modules
+            secret: process.env.JWT_SECRET || 'supersecret', 
             signOptions: { expiresIn: '1d' },
         }),
     ],
