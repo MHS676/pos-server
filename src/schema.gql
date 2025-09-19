@@ -1,0 +1,88 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  email: String!
+  name: String!
+}
+
+type Category {
+  id: Int!
+  name: String!
+  description: String!
+  products: [Product]
+}
+
+type Product {
+  id: Int!
+  name: String!
+  price: Float!
+  stock: Int!
+  categoryId: Int!
+  organizationId: Int!
+  category: Category
+}
+
+type Order {
+  id: Int!
+  userId: Int!
+  productId: Int!
+  quantity: Int!
+  totalPrice: Float!
+  createdAt: DateTime!
+  user: User
+  product: Product
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  """List all users in the same organization"""
+  users: [User!]!
+
+  """List all products"""
+  products: [Product!]!
+
+  """List all categories for the organization"""
+  categories: [Category!]!
+
+  """List all orders for the organization"""
+  orders: [Order!]!
+}
+
+type Mutation {
+  register(email: String!, password: String!, name: String!, organizationId: Int!): User!
+  login(email: String!, password: String!): String!
+
+  """Create a new product"""
+  createProduct(data: CreateProductInput!): Product!
+
+  """Create a new category"""
+  createCategory(data: CreateCategoryInput!): Category!
+
+  """Place an order"""
+  placeOrder(productId: Int!, quantity: Int!): Order!
+
+  """Sync users from JSONPlaceholder"""
+  syncUsers: String!
+
+  """Sync categories from JSONPlaceholder"""
+  syncCategories: String!
+}
+
+input CreateProductInput {
+  name: String!
+  price: Float!
+  stock: Int!
+  categoryId: Int!
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String!
+}

@@ -1,20 +1,22 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
+import { JwtStrategy } from './jwt.strategy';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [
         forwardRef(() => UserModule),
+        PassportModule,
         JwtModule.register({
-            // Use a single source of truth for secrets
-            secret: process.env.JWT_SECRET || 'supersecret',
+            secret: process.env.JWT_SECRET || 'supersecret', // Make sure the secret is the same across modules
             signOptions: { expiresIn: '1d' },
         }),
     ],
-    providers: [AuthService, AuthResolver, PrismaService],
+    providers: [AuthService, AuthResolver, PrismaService, JwtStrategy],
     exports: [AuthService],
 })
 export class AuthModule { }

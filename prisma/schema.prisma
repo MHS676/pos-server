@@ -1,6 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * Models follow the assignment:
+ * - Product: id, name, price, stock, categoryId, organizationId
+ * - Category: id, name, description, organizationId
+ * - Order: id, userId, productId, quantity, totalPrice, createdAt
+ * - User: id, name, email, organizationId, password (stored hashed)
+ * - Organization: for multi-tenant scoping
+ */
+
+model Organization {
+  id         Int        @id @default(autoincrement())
+  name       String
+  users      User[]
+  products   Product[]
+  categories Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id             Int    @id @default(autoincrement())
   email          String @unique
   name           String
   password       String
+  organizationId Int
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  orders       Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  products       Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id             Int    @id @default(autoincrement())
+  name           String
+  price          Float
+  stock          Int
+  categoryId     Int
+  organizationId Int
+
+  category     Category     @relation(fields: [categoryId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  orders       Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  productId  Int
+  quantity   Int
+  totalPrice Float
+  createdAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }
